@@ -31,9 +31,8 @@ const Login = () => {
 
       localStorage.setItem("token", token);
       localStorage.setItem("email", email);
+      navigate("/inbox");
 
-
-      navigate("/mailbox");
     } catch (err) {
       setError("Invalid email or password");
     }

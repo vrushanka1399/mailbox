@@ -3,6 +3,9 @@ import Login from "./Login";
 import Mailbox from "./pages/Mailbox";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ComposeMail from "./ComposeMail";
+import Inbox from "./pages/Inbox";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -12,6 +15,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/mailbox" element={<Mailbox />} />
         <Route path="/compose" element={<ComposeMail />} />
+        <Route path="/inbox" element={<Inbox />} />
+
 
       </Routes>
     </BrowserRouter>

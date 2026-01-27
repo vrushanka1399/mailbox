@@ -2,7 +2,7 @@ import Signup from "./pages/Signup";
 import Login from "./Login";
 import Mailbox from "./pages/Mailbox";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import ComposeMail from "./ComposeMail";
 function App() {
   return (
     <BrowserRouter>
@@ -11,6 +11,8 @@ function App() {
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/mailbox" element={<Mailbox />} />
+        <Route path="/compose" element={<ComposeMail />} />
+
       </Routes>
     </BrowserRouter>
   );

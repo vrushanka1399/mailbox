@@ -30,6 +30,8 @@ const Login = () => {
       const token = await userCredential.user.getIdToken();
 
       localStorage.setItem("token", token);
+      localStorage.setItem("email", email);
+
 
       navigate("/mailbox");
     } catch (err) {

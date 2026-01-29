@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useRef } from "react";
 import { Container, Button, ListGroup, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import useMailApi from "../hooks/useMailApi";
 
 const reducer = (state, action) => {
   if (action.type === "SET") return action.payload;
@@ -9,30 +10,24 @@ const reducer = (state, action) => {
 
 const Inbox = () => {
   const [mails, dispatch] = useReducer(reducer, []);
-  const navigate = useNavigate();
   const prevCount = useRef(0);
 
-  const email = localStorage.getItem("email");
-  const emailKey = email.replace(".", ",");
+  const navigate = useNavigate();
+  const { getInbox, deleteInboxMail } = useMailApi();
 
-  const fetchMails = () => {
-    fetch(
-      `https://YOUR_PROJECT_ID.firebaseio.com/mails/inbox/${emailKey}.json`
-    )
-      .then((res) => res.json())
-      .then((data) => {
-        const loaded = [];
+  const fetchMails = async () => {
+    const data = await getInbox();
 
-        for (let key in data) {
-          loaded.push({ id: key, ...data[key] });
-        }
+    const loaded = [];
 
-        // ONLY update if mail count changed
-        if (loaded.length !== prevCount.current) {
-          prevCount.current = loaded.length;
-          dispatch({ type: "SET", payload: loaded.reverse() });
-        }
-      });
+    for (let key in data) {
+      loaded.push({ id: key, ...data[key] });
+    }
+
+    if (loaded.length !== prevCount.current) {
+      prevCount.current = loaded.length;
+      dispatch({ type: "SET", payload: loaded.reverse() });
+    }
   };
 
   useEffect(() => {
@@ -48,12 +43,7 @@ const Inbox = () => {
   const deleteHandler = async (e, id) => {
     e.stopPropagation();
 
-    await fetch(
-      `https://YOUR_PROJECT_ID.firebaseio.com/mails/inbox/${emailKey}/${id}.json`,
-      {
-        method: "DELETE",
-      }
-    );
+    await deleteInboxMail(id);
 
     dispatch({
       type: "SET",

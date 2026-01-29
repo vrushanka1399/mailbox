@@ -4,7 +4,7 @@ import Mailbox from "./pages/Mailbox";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ComposeMail from "./ComposeMail";
 import Inbox from "./pages/Inbox";
-
+import MailDetail from "./pages/MailDetail";
 
 function App() {
   return (
@@ -16,8 +16,8 @@ function App() {
         <Route path="/mailbox" element={<Mailbox />} />
         <Route path="/compose" element={<ComposeMail />} />
         <Route path="/inbox" element={<Inbox />} />
-
-
+        <Route path="/inbox" element={<Inbox />} />
+        <Route path="/mail/:id" element={<MailDetail />} />
       </Routes>
     </BrowserRouter>
   );

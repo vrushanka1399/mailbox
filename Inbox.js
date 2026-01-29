@@ -95,6 +95,10 @@ const Inbox = () => {
             >
               Delete
             </Button>
+            <Button variant="secondary" onClick={() => navigate("/sent")}>
+            Sent
+            </Button>
+
 
           </ListGroup.Item>
         ))}

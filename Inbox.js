@@ -34,6 +34,22 @@ const Inbox = () => {
 
   const unreadCount = mails.filter((m) => !m.read).length;
 
+  const deleteHandler = async (e, id) => {
+    e.stopPropagation();
+
+    await fetch(
+      `https://YOUR_PROJECT_ID.firebaseio.com/mails/inbox/${emailKey}/${id}.json`,
+      {
+        method: "DELETE",
+      }
+    );
+
+    dispatch({
+      type: "SET",
+      payload: mails.filter((m) => m.id !== id),
+    });
+  };
+
   return (
     <Container className="mt-3">
 
@@ -48,24 +64,37 @@ const Inbox = () => {
         {mails.map((mail) => (
           <ListGroup.Item
             key={mail.id}
-            onClick={() => navigate(`/mail/${mail.id}`)}
+            className="d-flex justify-content-between align-items-center"
             style={{ cursor: "pointer" }}
+            onClick={() => navigate(`/mail/${mail.id}`)}
           >
 
-            {!mail.read && (
-              <span
-                style={{
-                  height: 10,
-                  width: 10,
-                  background: "blue",
-                  borderRadius: "50%",
-                  display: "inline-block",
-                  marginRight: 8,
-                }}
-              ></span>
-            )}
+            <div>
 
-            <strong>{mail.from}</strong> — {mail.subject}
+              {!mail.read && (
+                <span
+                  style={{
+                    height: 10,
+                    width: 10,
+                    background: "blue",
+                    borderRadius: "50%",
+                    display: "inline-block",
+                    marginRight: 8,
+                  }}
+                ></span>
+              )}
+
+              <strong>{mail.from}</strong> — {mail.subject}
+
+            </div>
+
+            <Button
+              variant="danger"
+              size="sm"
+              onClick={(e) => deleteHandler(e, mail.id)}
+            >
+              Delete
+            </Button>
 
           </ListGroup.Item>
         ))}

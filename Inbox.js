@@ -1,22 +1,21 @@
-import React, { useEffect, useReducer } from "react";
+import React, { useEffect, useReducer, useRef } from "react";
 import { Container, Button, ListGroup, Badge } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
 const reducer = (state, action) => {
-  if (action.type === "SET") {
-    return action.payload;
-  }
+  if (action.type === "SET") return action.payload;
   return state;
 };
 
 const Inbox = () => {
   const [mails, dispatch] = useReducer(reducer, []);
   const navigate = useNavigate();
+  const prevCount = useRef(0);
 
   const email = localStorage.getItem("email");
   const emailKey = email.replace(".", ",");
 
-  useEffect(() => {
+  const fetchMails = () => {
     fetch(
       `https://YOUR_PROJECT_ID.firebaseio.com/mails/inbox/${emailKey}.json`
     )
@@ -28,8 +27,20 @@ const Inbox = () => {
           loaded.push({ id: key, ...data[key] });
         }
 
-        dispatch({ type: "SET", payload: loaded.reverse() });
+        // ONLY update if mail count changed
+        if (loaded.length !== prevCount.current) {
+          prevCount.current = loaded.length;
+          dispatch({ type: "SET", payload: loaded.reverse() });
+        }
       });
+  };
+
+  useEffect(() => {
+    fetchMails();
+
+    const timer = setInterval(fetchMails, 2000);
+
+    return () => clearInterval(timer);
   }, []);
 
   const unreadCount = mails.filter((m) => !m.read).length;
@@ -53,7 +64,13 @@ const Inbox = () => {
   return (
     <Container className="mt-3">
 
-      <Button onClick={() => navigate("/compose")}>Compose</Button>
+      <Button variant="secondary" onClick={() => navigate("/sent")}>
+        Sent
+      </Button>{" "}
+
+      <Button onClick={() => navigate("/compose")}>
+        Compose
+      </Button>
 
       <h5 className="mt-2">
         Inbox <Badge bg="primary">{unreadCount}</Badge>
@@ -95,10 +112,6 @@ const Inbox = () => {
             >
               Delete
             </Button>
-            <Button variant="secondary" onClick={() => navigate("/sent")}>
-            Sent
-            </Button>
-
 
           </ListGroup.Item>
         ))}
